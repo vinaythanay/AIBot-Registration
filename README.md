@@ -13,15 +13,15 @@ If you want to work locally using your own IDE, you can clone this repo and push
 ### **Steps to Set Up Locally:**
 
 #### **1. Clone the repository using the project's Git URL.**
-```sh
+
 git clone <YOUR_GIT_URL>
-2. Navigate to the project directory.
+# 2. Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
-3. Install the necessary dependencies.
+# 3. Install the necessary dependencies.
 npm i
-4. Start the development server with auto-reloading and an instant preview.
+# 4. Start the development server with auto-reloading and an instant preview.
 npm run dev
-Edit a File Directly in GitHub
+# Edit a File Directly in GitHub
 Navigate to the desired file(s).
 Click the "Edit" button (pencil icon) at the top right of the file view.
 Make your changes and commit them.
@@ -32,7 +32,7 @@ Select the "Codespaces" tab.
 Click on "New codespace" to launch a new Codespace environment.
 Edit files directly within the Codespace, commit, and push your changes once you're done.
 Technologies Used
-This project is built with:
+# This project is built with:
 
 Vite - Fast development environment
 TypeScript - Strongly typed JavaScript
