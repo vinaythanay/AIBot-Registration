@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   Card,
   CardContent,
@@ -24,27 +24,42 @@ const ChatbotWidget = () => {
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
+    const userMessage = inputMessage.trim();
+    setInputMessage("");
+    
     try {
       setIsLoading(true);
-      setMessages((prev) => [...prev, { text: inputMessage, sender: "user" }]);
+      setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
 
       const { data, error } = await supabase.functions.invoke('chat', {
-        body: { message: inputMessage }
+        body: { message: userMessage }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(error.message);
+      }
+
+      if (!data?.text) {
+        throw new Error('No response received from the assistant');
+      }
 
       setMessages((prev) => [...prev, { text: data.text, sender: "bot" }]);
     } catch (error) {
-      console.error('Error generating response:', error);
+      console.error('Error in chat:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate response. Please try again.",
+        description: "Failed to get a response. Please try again.",
         variant: "destructive",
       });
+      
+      // Add an error message to the chat
+      setMessages((prev) => [...prev, { 
+        text: "Sorry, I encountered an error. Please try again.", 
+        sender: "bot" 
+      }]);
     } finally {
       setIsLoading(false);
-      setInputMessage("");
     }
   };
 
@@ -56,7 +71,7 @@ const ChatbotWidget = () => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-lg flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
-                Chat Assistant
+                AI Assistant
               </CardTitle>
               <Button
                 variant="ghost"
@@ -98,7 +113,12 @@ const ChatbotWidget = () => {
                 className="flex-1"
                 disabled={isLoading}
               />
-              <Button onClick={handleSendMessage} size="icon" disabled={isLoading}>
+              <Button 
+                onClick={handleSendMessage} 
+                size="icon" 
+                disabled={isLoading}
+                className={isLoading ? "opacity-50 cursor-not-allowed" : ""}
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </div>
